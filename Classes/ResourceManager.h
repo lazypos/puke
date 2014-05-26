@@ -12,12 +12,15 @@
 #include "cocos2d.h"
 USING_NS_CC;
 
+#define NUM_SIZE    39
+
 class CResourceManager {
     
     
 public:
     CResourceManager();
     void    init();
+    CCSprite* get_card(int seq);
 };
 
 typedef sigleton<CResourceManager> ResourceManager;
