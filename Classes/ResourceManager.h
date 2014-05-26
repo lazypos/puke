@@ -9,12 +9,15 @@
 #ifndef puke_ResourceManager_h
 #define puke_ResourceManager_h
 #include "sigleton.h"
+#include "cocos2d.h"
+USING_NS_CC;
 
 class CResourceManager {
-    void    init();
+    
     
 public:
     CResourceManager();
+    void    init();
 };
 
 typedef sigleton<CResourceManager> ResourceManager;
