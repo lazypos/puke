@@ -49,14 +49,14 @@ void CResourceManager::init(){
     
 }
 
-CCSprite* CResourceManager::get_card(int seq){
-    CCSprite *card = NULL;
+CCardSprite* CResourceManager::get_card(int seq){
+    CCardSprite *card = new CCardSprite;
     if (seq == 52) {
-         card = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("redking"));
+        card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("redking"));
     }else if (seq == 53) {
-        card = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("blackking"));
+        card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("blackking"));
     }else {
-        card = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("front"));
+        card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("front"));
         CCSize cardsize = card->getContentSize();
         char buf[32] = {0};
         int flowerNum = seq%4;
@@ -77,10 +77,10 @@ CCSprite* CResourceManager::get_card(int seq){
         color->setPosition(ccp(cardsize.width/2, cardsize.height/2));
         card->addChild(color);
     }
+    card->setSelected(false);
+    card->setSeq(seq);
     return card;
 }
-
-
 
 
 

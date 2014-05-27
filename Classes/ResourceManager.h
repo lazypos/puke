@@ -10,6 +10,7 @@
 #define puke_ResourceManager_h
 #include "sigleton.h"
 #include "cocos2d.h"
+#include "CardSprite.h"
 USING_NS_CC;
 
 #define NUM_SIZE    39
@@ -20,7 +21,7 @@ class CResourceManager {
 public:
     CResourceManager();
     void    init();
-    CCSprite* get_card(int seq);
+    CCardSprite* get_card(int seq);
 };
 
 typedef mysigleton<CResourceManager> ResourceManager;
