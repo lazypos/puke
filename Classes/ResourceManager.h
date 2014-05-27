@@ -23,6 +23,6 @@ public:
     CCSprite* get_card(int seq);
 };
 
-typedef sigleton<CResourceManager> ResourceManager;
+typedef mysigleton<CResourceManager> ResourceManager;
 
 #endif

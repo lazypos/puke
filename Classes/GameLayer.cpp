@@ -8,6 +8,7 @@
 
 #include "GameLayer.h"
 #include "ResourceManager.h"
+#include "CardOprator.h"
 
 CCScene* CGameLayer::scene(){
     CCScene *pScene = CCScene::create();
@@ -18,43 +19,26 @@ CCScene* CGameLayer::scene(){
 
 bool    CGameLayer::init(){
     ResourceManager::instance()->init();
+    CardOprator::instance()->init();
     
-//    CCSprite *puke = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("heitao"));
-//    puke->setPosition(ccp(300, 300));
-//    this->addChild(puke);
+    CCSprite * bg = CCSprite::create("game_bg_day.jpg");
+    CCSize  winSize = CCDirector::sharedDirector()->getWinSize();
+    CCSize  bgSize = bg->getContentSize();
+    bg->setScaleX(winSize.width/bgSize.width);
+    bg->setScaleY(winSize.height/bgSize.height);
+    bg->setPosition(ccp(winSize.width/2, winSize.height/2));
+    this->addChild(bg, -1);
     
-//    CCSprite *sp;
-//    char buf[32] = {0};
-//    for (int i=0; i<13; i++) {
-//        memset(buf, 0, 32);
-//        sprintf(buf, "blacknum%02d", i+1);
-//        sp = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(buf));
-//        sp->setPosition(ccp(i*40, 200));
-//        this->addChild(sp);
-//    }
-    
-    
-    
-    for (int i=0; i<13; i++) {
-        CCSprite *card = ResourceManager::instance()->get_card(i);
-        card->setPosition(ccp(50+i*50, 400));
+    CardOprator::instance()->shuffle();
+    vector<int> player;
+    CardOprator::instance()->getCard(1, player);
+    int pos = 0;
+    for (vector<int>::iterator iter = player.begin(); iter != player.end(); ++iter,++pos) {
+        CCSprite *card = ResourceManager::instance()->get_card(*iter);
+        card->setPosition(ccp(100+pos*50, 100));
         this->addChild(card);
     }
-    for (int i=13; i<26; i++) {
-        CCSprite *card = ResourceManager::instance()->get_card(i);
-        card->setPosition(ccp(50+(i-13)*50, 300));
-        this->addChild(card);
-    }
-    for (int i=26; i<39; i++) {
-        CCSprite *card = ResourceManager::instance()->get_card(i);
-        card->setPosition(ccp(50+(i-26)*50, 200));
-        this->addChild(card);
-    }
-    for (int i=39; i<54; i++) {
-        CCSprite *card = ResourceManager::instance()->get_card(i);
-        card->setPosition(ccp(50+(i-39)*50, 100));
-        this->addChild(card);
-    }
+    
     return true;
 }
 

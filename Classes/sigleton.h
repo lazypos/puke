@@ -10,8 +10,8 @@
 #define puke_sigleton_h
 
 template <typename T>
-class sigleton {
-    sigleton(){};
+class mysigleton {
+    mysigleton(){};
     
 public:
     static T* instance(){

@@ -59,8 +59,8 @@ CCSprite* CResourceManager::get_card(int seq){
         card = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("front"));
         CCSize cardsize = card->getContentSize();
         char buf[32] = {0};
-        int flowerNum = seq/13;
-        int valueNum = seq%13;
+        int flowerNum = seq%4;
+        int valueNum = seq/4;
         CCSprite * num = NULL;
         if (flowerNum == 0 || flowerNum == 2) {
             sprintf(buf, "rednum%02d", valueNum);
