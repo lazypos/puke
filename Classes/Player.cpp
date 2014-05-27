@@ -23,9 +23,10 @@ void    CPlayer::start(int num){
 }
 
 void    CPlayer::clear(){
+    CCardSprite *p;
     for (list<CCardSprite*>::iterator iter = lstCards.begin();
          iter != lstCards.end(); ++iter) {
-        CCardSprite *p = *iter;
+        p = *iter;
         if (p) {
             delete p;
         }
@@ -36,4 +37,35 @@ void    CPlayer::clear(){
 list<CCardSprite*>& CPlayer::getCardsList(){
     return lstCards;
 }
+
+void CPlayer::getSelectedCards(list<CCardSprite*>& lstSelected){
+    CCardSprite *p;
+    for (list<CCardSprite*>::iterator iter = lstCards.begin();
+         iter != lstCards.end(); ++iter) {
+        p = *iter;
+        if (p->isSelected()) {
+            lstSelected.push_back(p);
+        }
+    }
+}
+
+void CPlayer::deleteSelectedCards(){
+    CCardSprite *p;
+    for (list<CCardSprite*>::iterator iter = lstCards.begin();
+         iter != lstCards.end();) {
+        p = *iter;
+        if (p->isSelected()) {
+            iter = lstCards.erase(iter);
+            if (iter == lstCards.end()) {
+                break;
+            }
+        }
+        else
+            iter++;
+    }
+}
+
+
+
+
 

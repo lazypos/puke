@@ -17,10 +17,15 @@ class CPlayer{
     void    clear();
     
     list<CCardSprite*>      lstCards;
+    int                     sorcer;
     
 public:
-    void    start(int num);
+    void                start(int num);
     list<CCardSprite*>& getCardsList();
+    void                setSorcer(int n){sorcer = n;}
+    int                 getSorcer(){return sorcer;}
+    void                getSelectedCards(list<CCardSprite*>& lstSelected);
+    void                deleteSelectedCards();
 };
 
 #endif

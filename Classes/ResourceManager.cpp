@@ -47,6 +47,11 @@ void CResourceManager::init(){
     puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(294,0,98,138));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(puke, "back");
     
+    CCSpriteFrame* button = CCSpriteFrame::create("game_bg_play_long_btn.png", CCRect(0,0,152,61));
+    CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(button, "redbutton");
+    button = CCSpriteFrame::create("game_bg_play_long_btn.png", CCRect(152,0,152,61));
+    CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(button, "greenbutton");
+    
 }
 
 CCardSprite* CResourceManager::get_card(int seq){

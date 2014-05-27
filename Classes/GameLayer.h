@@ -15,13 +15,17 @@ USING_NS_CC;
 class  CGameLayer : public CCLayer{
     CPlayer mainPlayer;
     int lastseq;
+    CCSize  winSize;
     
     CREATE_FUNC(CGameLayer)
     bool    init();
     void    initMainPlayer(int num);
+    void    reviewPlayer();
     
     bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
     void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
+    
+    void onGreenClicked(CCObject* pSender);
     
 public:
     static CCScene* scene();
