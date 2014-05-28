@@ -20,6 +20,11 @@ class CPlayer{
     int                     sorcer;
     
 public:
+    float                   time;
+    int                     _num;
+    bool                    isActive; // 是否是该玩家出牌
+    bool                    isMainPlayer;
+    
     void                start(int num);
     list<CCardSprite*>& getCardsList();
     void                setSorcer(int n){sorcer = n;}

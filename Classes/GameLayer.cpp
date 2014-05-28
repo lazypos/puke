@@ -10,6 +10,8 @@
 #include "ResourceManager.h"
 #include "CardOprator.h"
 #include "CardSprite.h"
+#include "GameConfig.h"
+#include "Global.h"
 
 CCScene* CGameLayer::scene(){
     CCScene *pScene = CCScene::create();
@@ -20,6 +22,7 @@ CCScene* CGameLayer::scene(){
 
 bool    CGameLayer::init(){
     ResourceManager::instance()->init();
+    GameConfig::instance()->init();
     CardOprator::instance()->init();
     lastseq = -1;
     
@@ -37,7 +40,7 @@ bool    CGameLayer::init(){
     this->addChild(sorcerPic);
     CCLabelBMFont* sorcerLabel = CCLabelBMFont::create("000000", "fontGreen.fnt");
     sorcerLabel->setPosition(ccp(winSize.width/2, 25));
-    this->addChild(sorcerLabel, 1, 100);
+    this->addChild(sorcerLabel, 1, tagMainSorcer);
 
     // 出牌菜单
     CCSprite *redbutton = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("redbutton"));
@@ -56,21 +59,30 @@ bool    CGameLayer::init(){
     pMenu->addChild(greenbuttonItem);
     this->addChild(pMenu);
     
-    CardOprator::instance()->shuffle();
-    initMainPlayer(1);
+    // 倒计时菜单
+    CCLabelBMFont* mainTime = CCLabelBMFont::create("30", "fontWhiteBrownLevel.fnt");
+    mainTime->setPosition(ccp(winSize.width/2+250, 250));
+    this->addChild(mainTime, 1, tagMainTime);
+
+    initGame();
+    
+    this->scheduleUpdate();
+    this->schedule(schedule_selector(CGameLayer::mainPlayerSchedule), 0.1f);
+    this->schedule(schedule_selector(CGameLayer::upPlayerSchedule), 0.1f);
+    this->schedule(schedule_selector(CGameLayer::downlayerSchedule), 0.1f);
     
     setTouchEnabled(true);
     CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
     return true;
 }
 
-void    CGameLayer::initMainPlayer(int num){
-    mainPlayer.start(num);
+void    CGameLayer::initGame(){
+    GameConfig::instance()->game_start();
     reviewPlayer();
 }
 
 void    CGameLayer::reviewPlayer(){
-    list<CCardSprite*> lstCards = mainPlayer.getCardsList();
+    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
     
     int len = 120 + (lstCards.size()-1)*50;
     int posbegin = (winSize.width-len)/2 + 60;
@@ -101,7 +113,7 @@ void    CGameLayer::reviewPlayer(){
 bool CGameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent){
     CCPoint p = pTouch->getLocation();
     
-    list<CCardSprite*> lstCards = mainPlayer.getCardsList();
+    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
     CCardSprite *card;
     for (list<CCardSprite*>::reverse_iterator riter = lstCards.rbegin();
          riter != lstCards.rend(); ++riter) {
@@ -124,7 +136,7 @@ bool CGameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent){
 
 void CGameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent){
     CCPoint p = pTouch->getLocation();
-    list<CCardSprite*> lstCards = mainPlayer.getCardsList();
+    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
     CCardSprite *card;
     for (list<CCardSprite*>::reverse_iterator riter = lstCards.rbegin();
          riter != lstCards.rend(); ++riter) {
@@ -149,7 +161,7 @@ void CGameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent){
 
 void CGameLayer::onGreenClicked(CCObject* pSender){
     list<CCardSprite*> lstSelected;
-    mainPlayer.getSelectedCards(lstSelected);
+    GameConfig::instance()->vecPlayers[0].getSelectedCards(lstSelected);
     lstSelected.sort(mysort);
     
     if (!CardOprator::instance()->BiggerThanBefore(perCards, lstSelected))
@@ -165,7 +177,7 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
     }
     // 再清理手牌
     lstFront = lstSelected;
-    list<CCardSprite*> lstCards = mainPlayer.getCardsList();
+    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
     for (list<CCardSprite*>::iterator iter = lstCards.begin();
          iter != lstCards.end(); ++iter) {
         if ((*iter)) {
@@ -173,7 +185,7 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
         }
     }
     
-    mainPlayer.deleteSelectedCards();
+    GameConfig::instance()->vecPlayers[0].deleteSelectedCards();
     reviewPlayer();
 }
 
@@ -187,4 +199,30 @@ void CGameLayer::onRedClicked(CCObject* pSender){
     }
 }
 
+void CGameLayer::update(float dt){
+    if (GameConfig::instance()->ganmeStatus == game_ready) {
+        
+    }
+}
 
+void  CGameLayer::mainPlayerSchedule(float dt){
+    if (GameConfig::instance()->vecPlayers[0].isActive) {
+        GameConfig::instance()->vecPlayers[0].time -= dt;
+        CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagMainTime));
+        char buf[20];
+        sprintf(buf, "%d", int(GameConfig::instance()->vecPlayers[0].time));
+        lbTime->setString(buf);
+        if (GameConfig::instance()->vecPlayers[0].time < 0) {
+            GameConfig::instance()->vecPlayers[0].isActive = false;
+            GameConfig::instance()->activePlayer++;
+        }
+    }
+}
+
+void    CGameLayer::upPlayerSchedule(float dt){
+    
+}
+
+void    CGameLayer::downlayerSchedule(float dt){
+    
+}

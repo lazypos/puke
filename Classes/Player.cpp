@@ -12,6 +12,9 @@
 
 void    CPlayer::start(int num){
     clear();
+    _num = num;
+    time = 30;
+    isActive = false;
     
     vector<int> cards;
     CardOprator::instance()->getCard(num, cards);

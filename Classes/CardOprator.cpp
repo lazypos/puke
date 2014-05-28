@@ -214,7 +214,7 @@ bool CCardOperator::BiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSpr
     int nowval = getLittestCardRval(nowCards);
     
     if (perType == boom) {
-        if (nowval <= perval) {
+        if (nowval <= perval || perCards.size() > nowCards.size()) {
             return false;
         }
     } else {
