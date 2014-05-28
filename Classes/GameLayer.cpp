@@ -12,6 +12,7 @@
 #include "CardSprite.h"
 #include "GameConfig.h"
 #include "Global.h"
+#include "CardAI.h"
 
 CCScene* CGameLayer::scene(){
     CCScene *pScene = CCScene::create();
@@ -214,6 +215,9 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
     
     list<CCardSprite*> lstSelected;
     GameConfig::instance()->vecPlayers[0].getSelectedCards(lstSelected);
+    if (lstSelected.empty())
+        return
+    
     lstSelected.sort(mysort);
     
     if (!CardOprator::instance()->BiggerThanBefore(perCards, lstSelected))
@@ -249,7 +253,10 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
 void CGameLayer::onRedClicked(CCObject* pSender){
     if (GameConfig::instance()->activePlayer%3 != 0)
         return;
-
+    
+    if (perCards.empty())
+        return;
+    
     // 清理门前的牌
     for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[0].lstFront.begin();
          iter != GameConfig::instance()->vecPlayers[0].lstFront.end(); ++iter) {
@@ -306,16 +313,39 @@ void  CGameLayer::playerSchedule(float dt){
             char buf[20];
             sprintf(buf, "%d", int(GameConfig::instance()->vecPlayers[0].time));
             lbTime->setString(buf);
-            if (GameConfig::instance()->vecPlayers[0].time < 0) {
-                GameConfig::instance()->vecPlayers[0].isActive = false;
-                GameConfig::instance()->activePlayer++;
-                lbTime->setVisible(false);
+            if (GameConfig::instance()->vecPlayers[0].time <= 0) {
+                if (perCards.empty()) {
+                    clearSelected(0);
+                    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
+                    CCardAI::putOneCard(lstCards);
+                    onGreenClicked(NULL);
+                    return;
+                }
+                else{
+                    GameConfig::instance()->vecPlayers[0].isActive = false;
+                    GameConfig::instance()->activePlayer++;
+                    lbTime->setVisible(false);
+                }
             }
         }
     }else if (playerSeq == 1) {
         reviewPlayer(1);
     }else {
         reviewPlayer(2);
+    }
+}
+
+void CGameLayer::clearSelected(int n){
+    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[n].getCardsList();
+    CCardSprite *p;
+    for (list<CCardSprite*>::iterator iter = lstCards.begin();
+         iter != lstCards.end(); ++iter) {
+        p = *iter;
+        if (p->isSelected()) {
+            p->setSelected(false);
+            if (n == 0)
+                p->setPosition(ccp(p->getPositionX(), p->getPositionY()-30));
+        }
     }
 }
 

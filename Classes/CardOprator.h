@@ -39,7 +39,6 @@ typedef struct cardinfo{
 class CCardOperator {
     vector<CardInfo>    vecCardInfo;
     int                 cardArray[52];
-    int                 getRealValue(int seq);
     
 public:
     static void randArray(int* arr, int len);
@@ -48,6 +47,8 @@ public:
     void        init();
     void        shuffle();
     bool        getCard(int seq, vector<int>& vecCards);
+    // 获取rval
+    int         getRealValue(int seq);
     
     // 获取出牌的类型
     cardtype    getCardsType(list<CCardSprite*>& lstCards);

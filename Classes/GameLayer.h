@@ -38,6 +38,8 @@ class  CGameLayer : public CCLayer{
     void    update(float dt);
     void    playerSchedule(float dt);
     
+    void    clearSelected(int n);
+    
 public:
     static CCScene* scene();
 };

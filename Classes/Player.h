@@ -35,6 +35,7 @@ public:
     int                 getSorcer(){return sorcer;}
     void                getSelectedCards(list<CCardSprite*>& lstSelected);
     void                deleteSelectedCards();
+    
 };
 
 #endif
