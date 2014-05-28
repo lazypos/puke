@@ -44,7 +44,7 @@ bool    CGameLayer::init(){
     CCSprite *greenbutton = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("greenbutton"));
 
     CCMenuItemImage *redbuttonItem = CCMenuItemImage::create();
-    redbuttonItem->initWithNormalSprite(redbutton, redbutton, redbutton, this, menu_selector(CGameLayer::onGreenClicked));
+    redbuttonItem->initWithNormalSprite(redbutton, redbutton, redbutton, this, menu_selector(CGameLayer::onRedClicked));
     redbuttonItem->setPosition(ccp(-100, 0));
     CCMenuItemImage *greenbuttonItem = CCMenuItemImage::create();
     greenbuttonItem->initWithNormalSprite(greenbutton, greenbutton, greenbutton, this, menu_selector(CGameLayer::onGreenClicked));
@@ -81,6 +81,18 @@ void    CGameLayer::reviewPlayer(){
          iter != lstCards.end(); ++iter) {
         p = *iter;
         p->setPosition(ccp(posbegin+i*50, 120));
+        i++;
+        this->addChild(p, 2, p->getSeq());
+    }
+    
+    // 门前的牌
+    len = 120 + (lstFront.size()-1)*50;
+    posbegin = (winSize.width-len)/2 + 60;
+    i = 0;
+    for (list<CCardSprite*>::iterator iter = lstFront.begin();
+         iter != lstFront.end(); ++iter) {
+        p = *iter;
+        p->setPosition(ccp(posbegin+i*50, 350));
         i++;
         this->addChild(p, 2, p->getSeq());
     }
@@ -138,7 +150,21 @@ void CGameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent){
 void CGameLayer::onGreenClicked(CCObject* pSender){
     list<CCardSprite*> lstSelected;
     mainPlayer.getSelectedCards(lstSelected);
+    lstSelected.sort(mysort);
     
+    if (!CardOprator::instance()->BiggerThanBefore(perCards, lstSelected))
+        return;
+    
+    perCards = lstSelected;
+    // 先清理之前门前的牌
+    for (list<CCardSprite*>::iterator iter = lstFront.begin();
+         iter != lstFront.end(); ++iter) {
+        if ((*iter)) {
+            this->removeChildByTag((*iter)->getSeq());
+        }
+    }
+    // 再清理手牌
+    lstFront = lstSelected;
     list<CCardSprite*> lstCards = mainPlayer.getCardsList();
     for (list<CCardSprite*>::iterator iter = lstCards.begin();
          iter != lstCards.end(); ++iter) {
@@ -151,5 +177,14 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
     reviewPlayer();
 }
 
+void CGameLayer::onRedClicked(CCObject* pSender){
+    // 清理门前的牌
+    for (list<CCardSprite*>::iterator iter = lstFront.begin();
+         iter != lstFront.end(); ++iter) {
+        if ((*iter)) {
+            this->removeChildByTag((*iter)->getSeq());
+        }
+    }
+}
 
 

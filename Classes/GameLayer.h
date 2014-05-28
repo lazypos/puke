@@ -10,22 +10,31 @@
 #define puke_GameLayer_h
 #include "cocos2d.h"
 #include "Player.h"
+#include "CardSprite.h"
 USING_NS_CC;
+
+static inline bool  mysort (CCardSprite *a, CCardSprite *b){
+    return a->getSeq() < b->getSeq();
+}
 
 class  CGameLayer : public CCLayer{
     CPlayer mainPlayer;
     int lastseq;
     CCSize  winSize;
+    list<CCardSprite*> lstFront;
+    list<CCardSprite*> perCards;
     
     CREATE_FUNC(CGameLayer)
     bool    init();
     void    initMainPlayer(int num);
     void    reviewPlayer();
+    //void    reviewPlayerFront(list<CCardSprite*>& lstFront);
     
     bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
     void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
     
     void onGreenClicked(CCObject* pSender);
+    void onRedClicked(CCObject* pSender);
     
 public:
     static CCScene* scene();

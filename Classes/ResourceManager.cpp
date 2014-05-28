@@ -13,7 +13,7 @@ CResourceManager::CResourceManager(){
 }
 
 void CResourceManager::init(){
-    // init flower
+    // init 花色
     CCSpriteFrame* flowerframe = CCSpriteFrame::create("game_list_poker_flower.png", CCRect(0,0,44,42));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(flowerframe, "flower0");
     flowerframe = CCSpriteFrame::create("game_list_poker_flower.png", CCRect(44,0,44,42));
@@ -23,7 +23,7 @@ void CResourceManager::init(){
     flowerframe = CCSpriteFrame::create("game_list_poker_flower.png", CCRect(132,0,44,42));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(flowerframe, "flower3");
     
-    // init number
+    // init 点数
     CCSpriteFrame* numframe;
     char buf[32] = {0};
     for (int i=0; i<13; i++) {
@@ -37,14 +37,14 @@ void CResourceManager::init(){
         CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(numframe, buf);
     }
     
-    // init surface
+    // init 背景
     CCSpriteFrame* puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(0,0,98,138));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(puke, "front");
-    puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(98,0,98,138));
+    puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(99,0,98,138));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(puke, "redking");
-    puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(196,0,98,138));
+    puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(197,0,98,138));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(puke, "blackking");
-    puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(294,0,98,138));
+    puke = CCSpriteFrame::create("game_list_poker_surface.png", CCRect(296,0,98,138));
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFrame(puke, "back");
     
     CCSpriteFrame* button = CCSpriteFrame::create("game_bg_play_long_btn.png", CCRect(0,0,152,61));
@@ -54,6 +54,7 @@ void CResourceManager::init(){
     
 }
 
+// 根据卡牌序号得到卡牌精灵
 CCardSprite* CResourceManager::get_card(int seq){
     CCardSprite *card = new CCardSprite;
     if (seq == 52) {
