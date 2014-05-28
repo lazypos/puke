@@ -10,13 +10,21 @@
 #define puke_Global_h
 
 typedef enum _tag{
-    tagMainSorcer = 1000,
-    tagUpSorcer,
-    tagDownSorcer,
+    tagSorcer0 = 1000,
+    tagSorcer1,
+    tagSorcer2,
     
-    tagMainTime,
-    tagUpTime,
-    tagDownTime,
+    tagTime0,
+    tagTime1,
+    tagTime2,
+    
+    tagName0,
+    tagName1,
+    tagName2,
+    
+    tagCards0,
+    tagCards1,
+    tagCards2,
 }gameTag;
 
 #endif

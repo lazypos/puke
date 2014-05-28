@@ -17,6 +17,7 @@ class CPlayer{
     void    clear();
     
     list<CCardSprite*>      lstCards;
+    
     int                     sorcer;
     
 public:
@@ -24,7 +25,10 @@ public:
     int                     _num;
     bool                    isActive; // 是否是该玩家出牌
     bool                    isMainPlayer;
+    // 前一次出的牌
+    list<CCardSprite*>      lstFront;
     
+    void                init();
     void                start(int num);
     list<CCardSprite*>& getCardsList();
     void                setSorcer(int n){sorcer = n;}

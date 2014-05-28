@@ -29,6 +29,7 @@ public:
     gameStatus  ganmeStatus;
     
     int         activePlayer;
+    int         lastOutCards;
     
     void        game_start();
 };

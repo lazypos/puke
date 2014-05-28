@@ -10,11 +10,15 @@
 #include "CardOprator.h"
 #include "ResourceManager.h"
 
+void  CPlayer::init(){
+    time = 30;
+    isActive = false;
+    sorcer = 10000;
+}
+
 void    CPlayer::start(int num){
     clear();
     _num = num;
-    time = 30;
-    isActive = false;
     
     vector<int> cards;
     CardOprator::instance()->getCard(num, cards);
@@ -22,7 +26,6 @@ void    CPlayer::start(int num){
         CCardSprite *card = ResourceManager::instance()->get_card(*iter);
         lstCards.push_back(card);
     }
-
 }
 
 void    CPlayer::clear(){

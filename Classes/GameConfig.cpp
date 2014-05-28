@@ -13,6 +13,7 @@ void        CGameConfig::init(){
     vecPlayers.clear();
     for (int i=0; i<3; i++) {
         CPlayer player;
+        player.init();
         if (i == 0)
             player.isMainPlayer = true;
         vecPlayers.push_back(player);
@@ -21,12 +22,15 @@ void        CGameConfig::init(){
 
 void        CGameConfig::game_start(){
     CardOprator::instance()->shuffle();
+    
     srand(time(NULL));
     int n = rand()%3;
     activePlayer = n;
+    lastOutCards = n;
     printf("restart game:%d\n", n);
     for (int i=0; i<3; i++) {
         vecPlayers[n++].start(i);
         n %= 3;
     }
+    ganmeStatus = game_started;
 }

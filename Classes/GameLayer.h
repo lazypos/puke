@@ -20,13 +20,14 @@ static inline bool  mysort (CCardSprite *a, CCardSprite *b){
 class  CGameLayer : public CCLayer{
     int lastseq;
     CCSize  winSize;
-    list<CCardSprite*> lstFront;
+    
     list<CCardSprite*> perCards;
     
     CREATE_FUNC(CGameLayer)
     bool    init();
     void    initGame();
-    void    reviewPlayer();
+    void    reviewPlayer(int n);
+    void    reviewOther();
     
     bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
     void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
@@ -35,9 +36,7 @@ class  CGameLayer : public CCLayer{
     void onRedClicked(CCObject* pSender);
     
     void    update(float dt);
-    void    mainPlayerSchedule(float dt);
-    void    upPlayerSchedule(float dt);
-    void    downlayerSchedule(float dt);
+    void    playerSchedule(float dt);
     
 public:
     static CCScene* scene();

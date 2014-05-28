@@ -35,12 +35,57 @@ bool    CGameLayer::init(){
     bg->setPosition(ccp(winSize.width/2, winSize.height/2));
     this->addChild(bg, -1);
     
+    // 主玩家信息
     CCSprite *sorcerPic = CCSprite::create("game_icon_treasure.png");
     sorcerPic->setPosition(ccp(winSize.width/2-100, 25));
     this->addChild(sorcerPic);
-    CCLabelBMFont* sorcerLabel = CCLabelBMFont::create("000000", "fontGreen.fnt");
+    int sorcer = GameConfig::instance()->vecPlayers[0].getSorcer();
+    char buf[20];
+    memset(buf, 0, 20);
+    sprintf(buf, "%d", sorcer);
+    CCLabelBMFont* sorcerLabel = CCLabelBMFont::create(buf, "fontGreen.fnt");
     sorcerLabel->setPosition(ccp(winSize.width/2, 25));
-    this->addChild(sorcerLabel, 1, tagMainSorcer);
+    this->addChild(sorcerLabel, 1, tagSorcer0);
+    
+    CCLabelTTF *lebname = CCLabelTTF::create("大狗哥", "font/Marker Felt.ttf", 35);
+    lebname->setPosition(ccp(winSize.width/2+200, 25));
+    this->addChild(lebname, 1, tagName0);
+    
+    // 其余玩家1信息
+    CCSprite *sorcerPic1 = CCSprite::create("game_icon_treasure.png");
+    sorcerPic1->setPosition(ccp(winSize.width-200, winSize.height/2+200));
+    this->addChild(sorcerPic1);
+    sorcer = GameConfig::instance()->vecPlayers[2].getSorcer();
+    memset(buf, 0, 20);
+    sprintf(buf, "%d", sorcer);
+    CCLabelBMFont* sorcerLabel1 = CCLabelBMFont::create(buf, "fontGreen.fnt");
+    sorcerLabel1->setPosition(ccp(winSize.width-100, winSize.height/2+200));
+    this->addChild(sorcerLabel1, 1, tagSorcer1);
+    
+    CCLabelTTF *lebname1 = CCLabelTTF::create("玩家1", "font/Marker Felt.ttf", 35);
+    lebname1->setPosition(ccp(winSize.width-100, winSize.height/2+150));
+    this->addChild(lebname1, 1, tagName1);
+    CCLabelBMFont* cardsNum1 = CCLabelBMFont::create("0", "fontVipLevel.fnt");
+    cardsNum1->setPosition(ccp(winSize.width-50, winSize.height/2+100));
+    this->addChild(cardsNum1, 1, tagCards1);
+    
+    // 其余玩家2信息
+    CCSprite *sorcerPic2 = CCSprite::create("game_icon_treasure.png");
+    sorcerPic2->setPosition(ccp(50, winSize.height/2+200));
+    this->addChild(sorcerPic2);
+    sorcer = GameConfig::instance()->vecPlayers[2].getSorcer();
+    memset(buf, 0, 20);
+    sprintf(buf, "%d", sorcer);
+    CCLabelBMFont* sorcerLabel2 = CCLabelBMFont::create(buf, "fontGreen.fnt");
+    sorcerLabel2->setPosition(ccp(150, winSize.height/2+200));
+    this->addChild(sorcerLabel2, 1, tagSorcer2);
+    
+    CCLabelTTF *lebname2 = CCLabelTTF::create("玩家2", "font/Marker Felt.ttf", 35);
+    lebname2->setPosition(ccp(100, winSize.height/2+150));
+    this->addChild(lebname2, 1, tagName2);
+    CCLabelBMFont* cardsNum2 = CCLabelBMFont::create("0", "fontVipLevel.fnt");
+    cardsNum2->setPosition(ccp(50, winSize.height/2+100));
+    this->addChild(cardsNum2, 1, tagCards2);
 
     // 出牌菜单
     CCSprite *redbutton = CCSprite::createWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("redbutton"));
@@ -62,14 +107,13 @@ bool    CGameLayer::init(){
     // 倒计时菜单
     CCLabelBMFont* mainTime = CCLabelBMFont::create("30", "fontWhiteBrownLevel.fnt");
     mainTime->setPosition(ccp(winSize.width/2+250, 250));
-    this->addChild(mainTime, 1, tagMainTime);
-
-    initGame();
+    mainTime->setVisible(false);
+    this->addChild(mainTime, 1, tagTime0);
+    
+    GameConfig::instance()->ganmeStatus = game_ready;
     
     this->scheduleUpdate();
-    this->schedule(schedule_selector(CGameLayer::mainPlayerSchedule), 0.1f);
-    this->schedule(schedule_selector(CGameLayer::upPlayerSchedule), 0.1f);
-    this->schedule(schedule_selector(CGameLayer::downlayerSchedule), 0.1f);
+    this->schedule(schedule_selector(CGameLayer::playerSchedule), 0.1f);
     
     setTouchEnabled(true);
     CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
@@ -78,36 +122,41 @@ bool    CGameLayer::init(){
 
 void    CGameLayer::initGame(){
     GameConfig::instance()->game_start();
-    reviewPlayer();
+    for (int i=0; i<3; i++)
+        reviewPlayer(i);
 }
 
-void    CGameLayer::reviewPlayer(){
-    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
+void    CGameLayer::reviewPlayer(int n){
+    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[n].getCardsList();
     
-    int len = 120 + (lstCards.size()-1)*50;
-    int posbegin = (winSize.width-len)/2 + 60;
-    
+    int len, posbegin, i;
     CCardSprite *p;
-    int i = 0;
-    for (list<CCardSprite*>::iterator iter = lstCards.begin();
-         iter != lstCards.end(); ++iter) {
-        p = *iter;
-        p->setPosition(ccp(posbegin+i*50, 120));
-        i++;
-        this->addChild(p, 2, p->getSeq());
+    if (n == 0) {
+        len = 120 + (lstCards.size()-1)*50;
+        posbegin = (winSize.width-len)/2 + 60;
+        
+        i = 0;
+        for (list<CCardSprite*>::iterator iter = lstCards.begin();
+             iter != lstCards.end(); ++iter) {
+            p = *iter;
+            p->setPosition(ccp(posbegin+i*50, 120));
+            i++;
+            this->addChild(p, 2, p->getSeq());
+        }
     }
     
     // 门前的牌
-    len = 120 + (lstFront.size()-1)*50;
+    len = 120 + (GameConfig::instance()->vecPlayers[n].lstFront.size()-1)*50;
     posbegin = (winSize.width-len)/2 + 60;
     i = 0;
-    for (list<CCardSprite*>::iterator iter = lstFront.begin();
-         iter != lstFront.end(); ++iter) {
+    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[n].lstFront.begin();
+         iter != GameConfig::instance()->vecPlayers[n].lstFront.end(); ++iter) {
         p = *iter;
         p->setPosition(ccp(posbegin+i*50, 350));
         i++;
         this->addChild(p, 2, p->getSeq());
     }
+
 }
 
 bool CGameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent){
@@ -160,6 +209,9 @@ void CGameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent){
 }
 
 void CGameLayer::onGreenClicked(CCObject* pSender){
+    if (GameConfig::instance()->activePlayer%3 != 0)
+        return;
+    
     list<CCardSprite*> lstSelected;
     GameConfig::instance()->vecPlayers[0].getSelectedCards(lstSelected);
     lstSelected.sort(mysort);
@@ -169,14 +221,14 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
     
     perCards = lstSelected;
     // 先清理之前门前的牌
-    for (list<CCardSprite*>::iterator iter = lstFront.begin();
-         iter != lstFront.end(); ++iter) {
+    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[0].lstFront.begin();
+         iter != GameConfig::instance()->vecPlayers[0].lstFront.end(); ++iter) {
         if ((*iter)) {
             this->removeChildByTag((*iter)->getSeq());
         }
     }
     // 再清理手牌
-    lstFront = lstSelected;
+    GameConfig::instance()->vecPlayers[0].lstFront = lstSelected;
     list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
     for (list<CCardSprite*>::iterator iter = lstCards.begin();
          iter != lstCards.end(); ++iter) {
@@ -186,43 +238,74 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
     }
     
     GameConfig::instance()->vecPlayers[0].deleteSelectedCards();
-    reviewPlayer();
+    reviewPlayer(0);
 }
 
 void CGameLayer::onRedClicked(CCObject* pSender){
+    if (GameConfig::instance()->activePlayer%3 != 0)
+        return;
+
     // 清理门前的牌
-    for (list<CCardSprite*>::iterator iter = lstFront.begin();
-         iter != lstFront.end(); ++iter) {
+    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[0].lstFront.begin();
+         iter != GameConfig::instance()->vecPlayers[0].lstFront.end(); ++iter) {
         if ((*iter)) {
             this->removeChildByTag((*iter)->getSeq());
         }
     }
 }
 
-void CGameLayer::update(float dt){
-    if (GameConfig::instance()->ganmeStatus == game_ready) {
-        
-    }
+void    CGameLayer::reviewOther(){
+    int cardsNum = GameConfig::instance()->vecPlayers[1].getCardsList().size();
+    CCLabelBMFont* lbCards = (CCLabelBMFont*)(this->getChildByTag(tagCards1));
+    char buf[20];
+    memset(buf, 0, 20);
+    sprintf(buf, "%d", cardsNum);
+    lbCards->setString(buf);
+    
+    cardsNum = GameConfig::instance()->vecPlayers[2].getCardsList().size();
+    lbCards = (CCLabelBMFont*)(this->getChildByTag(tagCards2));
+    memset(buf, 0, 20);
+    sprintf(buf, "%d", cardsNum);
+    lbCards->setString(buf);
 }
 
-void  CGameLayer::mainPlayerSchedule(float dt){
-    if (GameConfig::instance()->vecPlayers[0].isActive) {
-        GameConfig::instance()->vecPlayers[0].time -= dt;
-        CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagMainTime));
-        char buf[20];
-        sprintf(buf, "%d", int(GameConfig::instance()->vecPlayers[0].time));
-        lbTime->setString(buf);
-        if (GameConfig::instance()->vecPlayers[0].time < 0) {
-            GameConfig::instance()->vecPlayers[0].isActive = false;
-            GameConfig::instance()->activePlayer++;
+
+void CGameLayer::update(float dt){
+    if (GameConfig::instance()->ganmeStatus == game_ready) {
+        initGame();
+        reviewOther();
+        GameConfig::instance()->ganmeStatus = game_started;
+    }
+    
+    if (GameConfig::instance()->ganmeStatus == game_started) {
+        int playerSeq = GameConfig::instance()->activePlayer%3;
+        GameConfig::instance()->vecPlayers[playerSeq].isActive = true;
+        if (playerSeq == 0) {
+            CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagName0));
+            lbTime->setVisible(true);
         }
     }
 }
 
-void    CGameLayer::upPlayerSchedule(float dt){
-    
+void  CGameLayer::playerSchedule(float dt){
+    int playerSeq = GameConfig::instance()->activePlayer%3;
+    if (playerSeq == 0) {
+        if (GameConfig::instance()->vecPlayers[0].isActive) {
+            GameConfig::instance()->vecPlayers[0].time -= dt;
+            CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagName0));
+            char buf[20];
+            sprintf(buf, "%d", int(GameConfig::instance()->vecPlayers[0].time));
+            lbTime->setString(buf);
+            if (GameConfig::instance()->vecPlayers[0].time < 0) {
+                GameConfig::instance()->vecPlayers[0].isActive = false;
+                GameConfig::instance()->activePlayer++;
+                lbTime->setVisible(false);
+            }
+        }
+    }else if (playerSeq == 1) {
+        reviewPlayer(1);
+    }else {
+        reviewPlayer(2);
+    }
 }
 
-void    CGameLayer::downlayerSchedule(float dt){
-    
-}
