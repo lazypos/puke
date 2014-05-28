@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "CardOprator.h"
 #include "ResourceManager.h"
+#include "GameConfig.h"
 
 void  CPlayer::init(){
     time = 30;
@@ -16,16 +17,19 @@ void  CPlayer::init(){
     sorcer = 10000;
 }
 
-void    CPlayer::start(int num){
+bool    CPlayer::start(int num){
     clear();
     _num = num;
     
+    bool bactive = false;
     vector<int> cards;
-    CardOprator::instance()->getCard(num, cards);
+    if(CardOprator::instance()->getCard(num, cards))
+        bactive = true;
     for (vector<int>::iterator iter = cards.begin(); iter != cards.end(); ++iter) {
         CCardSprite *card = ResourceManager::instance()->get_card(*iter);
         lstCards.push_back(card);
     }
+    return bactive;
 }
 
 void    CPlayer::clear(){

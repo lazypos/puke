@@ -78,7 +78,7 @@ void CCardOperator::shuffle(){
     randArray(cardArray, 52);
 }
 
-void CCardOperator::getCard(int seq, vector<int>& vecCards){
+bool CCardOperator::getCard(int seq, vector<int>& vecCards){
     int begin, end;
     if (seq == 0) {
         begin = 0;
@@ -99,7 +99,9 @@ void CCardOperator::getCard(int seq, vector<int>& vecCards){
     if (redThree) {
         vecCards.push_back(36);
         vecCards.push_back(38);
+        return true;
     }
+    return false;
 }
 
 cardtype CCardOperator::getCardsType(list<CCardSprite*>& lstCards){

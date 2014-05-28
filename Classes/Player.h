@@ -29,7 +29,7 @@ public:
     list<CCardSprite*>      lstFront;
     
     void                init();
-    void                start(int num);
+    bool                start(int num);
     list<CCardSprite*>& getCardsList();
     void                setSorcer(int n){sorcer = n;}
     int                 getSorcer(){return sorcer;}

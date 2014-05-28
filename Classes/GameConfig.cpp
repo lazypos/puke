@@ -25,11 +25,11 @@ void        CGameConfig::game_start(){
     
     srand(time(NULL));
     int n = rand()%3;
-    activePlayer = n;
     lastOutCards = n;
     printf("restart game:%d\n", n);
     for (int i=0; i<3; i++) {
-        vecPlayers[n++].start(i);
+        if (vecPlayers[n++].start(i))
+            activePlayer = n-1;
         n %= 3;
     }
     ganmeStatus = game_started;

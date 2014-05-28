@@ -152,7 +152,7 @@ void    CGameLayer::reviewPlayer(int n){
     for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[n].lstFront.begin();
          iter != GameConfig::instance()->vecPlayers[n].lstFront.end(); ++iter) {
         p = *iter;
-        p->setPosition(ccp(posbegin+i*50, 350));
+        p->setPosition(ccp(posbegin+i*45, 350));
         i++;
         this->addChild(p, 2, p->getSeq());
     }
@@ -239,6 +239,11 @@ void CGameLayer::onGreenClicked(CCObject* pSender){
     
     GameConfig::instance()->vecPlayers[0].deleteSelectedCards();
     reviewPlayer(0);
+    
+    CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
+    GameConfig::instance()->vecPlayers[0].isActive = false;
+    GameConfig::instance()->activePlayer++;
+    lbTime->setVisible(false);
 }
 
 void CGameLayer::onRedClicked(CCObject* pSender){
@@ -252,6 +257,11 @@ void CGameLayer::onRedClicked(CCObject* pSender){
             this->removeChildByTag((*iter)->getSeq());
         }
     }
+    
+    CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
+    GameConfig::instance()->vecPlayers[0].isActive = false;
+    GameConfig::instance()->activePlayer++;
+    lbTime->setVisible(false);
 }
 
 void    CGameLayer::reviewOther(){
@@ -281,7 +291,7 @@ void CGameLayer::update(float dt){
         int playerSeq = GameConfig::instance()->activePlayer%3;
         GameConfig::instance()->vecPlayers[playerSeq].isActive = true;
         if (playerSeq == 0) {
-            CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagName0));
+            CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
             lbTime->setVisible(true);
         }
     }
@@ -292,7 +302,7 @@ void  CGameLayer::playerSchedule(float dt){
     if (playerSeq == 0) {
         if (GameConfig::instance()->vecPlayers[0].isActive) {
             GameConfig::instance()->vecPlayers[0].time -= dt;
-            CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagName0));
+            CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
             char buf[20];
             sprintf(buf, "%d", int(GameConfig::instance()->vecPlayers[0].time));
             lbTime->setString(buf);

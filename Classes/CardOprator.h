@@ -47,7 +47,7 @@ public:
     
     void        init();
     void        shuffle();
-    void        getCard(int seq, vector<int>& vecCards);
+    bool        getCard(int seq, vector<int>& vecCards);
     
     // 获取出牌的类型
     cardtype    getCardsType(list<CCardSprite*>& lstCards);
