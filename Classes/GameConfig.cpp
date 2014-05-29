@@ -97,6 +97,9 @@ int        CGameConfig::game_check(){
         }
     }
 	for (int k=0; k<3; k++) {
+        if (vecPlayers[k].sorcer <= 0) {
+            vecPlayers[k].sorcer = 10000;
+        }
 		saveSorcer(k, vecPlayers[k].sorcer);
 	}
     return rst;
