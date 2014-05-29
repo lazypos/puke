@@ -38,7 +38,6 @@ class  CGameLayer : public CCLayer{
     void onGreenClicked(CCObject* pSender);
     void onRedClicked(CCObject* pSender);
     
-    void    update(float dt);
     void    playerSchedule(float dt);
     
     void    clearSelected(int n);

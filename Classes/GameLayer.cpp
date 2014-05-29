@@ -395,19 +395,6 @@ void CGameLayer::onRedClicked(CCObject* pSender){
     passCards(0);
 }
 
-void CGameLayer::update(float dt){
-    if (GameConfig::instance()->ganmeStatus == game_ready) {
-        initGame();
-        GameConfig::instance()->ganmeStatus = game_started;
-        int playerSeq = GameConfig::instance()->activePlayer%3;
-        GameConfig::instance()->vecPlayers[playerSeq].isActive = true;
-    }
-    
-    if (GameConfig::instance()->ganmeStatus == game_started) {
-
-    }
-}
-
 void  CGameLayer::playerSchedule(float dt){
     if (GameConfig::instance()->ganmeStatus != game_started) {
         return;

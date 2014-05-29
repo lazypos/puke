@@ -8,7 +8,13 @@ LOCAL_MODULE_FILENAME := libcocos2dcpp
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
-                   ../../Classes/HelloWorldScene.cpp
+                   ../../Classes/CardAI.cpp \
+                   ../../Classes/CardOprator.cpp \
+                   ../../Classes/CardSprite.cpp \
+                   ../../Classes/GameConfig.cpp \
+                   ../../Classes/GameLayer.cpp \
+                   ../../Classes/Player.cpp \
+                   ../../Classes/ResourceManager.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

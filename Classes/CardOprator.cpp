@@ -278,7 +278,7 @@ bool CCardOperator::BiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSpr
             return false;
         }
     }else if (perType == straight) {
-        if (nowType != boom || nowType == kingboom || nowType == tenboom){
+        if (nowType != boom && nowType != kingboom && nowType != tenboom){
             if (straightVal(nowCards) <= straightVal(perCards)
                 || nowCards.size() != perCards.size()) {
                 return false;
@@ -286,7 +286,7 @@ bool CCardOperator::BiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSpr
         }
         
     } else {
-        if (nowType != boom || nowType == kingboom || nowType == tenboom) {
+        if (nowType != boom && nowType != kingboom && nowType != tenboom) {
             if (nowval <= perval || nowCards.size() != perCards.size())
                 return false;
         }
