@@ -50,6 +50,8 @@ public:
     // 获取rval
     int         getRealValue(int seq);
     
+    int         isStraight();
+    
     // 获取出牌的类型
     cardtype    getCardsType(list<CCardSprite*>& lstCards);
     // 出牌类型是否允许

@@ -123,11 +123,11 @@ bool    CGameLayer::init(){
     
     // 胜负信息
     CCLabelTTF *lebWin = CCLabelTTF::create("你赢了！", "font/Marker Felt.ttf", 100);
-    lebWin->setPosition(ccp(winSize.width/2, winSize.height/2+200));
+    lebWin->setPosition(ccp(winSize.width/2, winSize.height/2+300));
     lebWin->setVisible(false);
     this->addChild(lebWin, 100, tagWin);
     CCLabelTTF *lebLose = CCLabelTTF::create("你输了！", "font/Marker Felt.ttf", 100);
-    lebLose->setPosition(ccp(winSize.width/2, winSize.height/2+200));
+    lebLose->setPosition(ccp(winSize.width/2, winSize.height/2+300));
     lebLose->setVisible(false);
     this->addChild(lebLose, 100, tagLose);
     
@@ -321,7 +321,8 @@ void   CGameLayer::putCards(int n){
 }
 
 void CGameLayer::onGreenClicked(CCObject* pSender){
-    if (GameConfig::instance()->ganmeStatus != game_started) {
+    if (GameConfig::instance()->ganmeStatus != game_started
+        || GameConfig::instance()->vecPlayers[0].isOver) {
         return;
     }
     
@@ -363,7 +364,8 @@ void  CGameLayer::overDo(int n){
 }
 
 void CGameLayer::onRedClicked(CCObject* pSender){
-    if (GameConfig::instance()->ganmeStatus != game_started) {
+    if (GameConfig::instance()->ganmeStatus != game_started
+        || GameConfig::instance()->vecPlayers[0].isOver) {
         return;
     }
     if (GameConfig::instance()->activePlayer%3 != 0)
@@ -412,7 +414,7 @@ void  CGameLayer::playerSchedule(float dt){
                 }
             }else{
                 if (playerSeq != 0) {
-                    if (GameConfig::instance()->vecPlayers[playerSeq].time > 30)
+                    if (GameConfig::instance()->vecPlayers[playerSeq].time > 29)
                         return;
                     clearSelected(playerSeq);
                     if (CCardAI::putBigger(perCards, lstCards))

@@ -109,10 +109,14 @@ cardtype CCardOperator::getCardsType(list<CCardSprite*>& lstCards){
         return unknow;
     
     vector<int> vecCards;
+    list<int> lstVals;
     for (list<CCardSprite*>::iterator iter = lstCards.begin();
          iter != lstCards.end(); ++iter) {
         vecCards.push_back((*iter)->getSeq());
+        lstVals.push_back(vecCardInfo[(*iter)->getSeq()].val);
     }
+    
+    lstVals.sort();
     
     if (lstCards.size() == 1) {
         return singal;
@@ -141,6 +145,20 @@ cardtype CCardOperator::getCardsType(list<CCardSprite*>& lstCards){
                     return straight;
                 }
             }
+            // 10
+            if (lstVals.back() < 13) {
+                int perval = 0;
+                for (list<int>::iterator iter = lstVals.begin();
+                     iter != lstVals.end(); ++iter) {
+                    if (perval != 0) {
+                        if (perval + 1 != (*iter)) {
+                            return unknow;
+                        }
+                    }
+                    perval = *iter;
+                }
+                return straight;
+            }
         }
     }else if (lstCards.size() == 4) {
         if (IS_KING(vecCards[2]))
@@ -160,6 +178,20 @@ cardtype CCardOperator::getCardsType(list<CCardSprite*>& lstCards){
                     && vecCards[0]/4 == vecCards[3]/4-3) {
                     return straight;
                 }
+            }
+            
+            if (lstVals.back() < 13) {
+                int perval = 0;
+                for (list<int>::iterator iter = lstVals.begin();
+                     iter != lstVals.end(); ++iter) {
+                    if (perval != 0) {
+                        if (perval + 1 != (*iter)) {
+                            return unknow;
+                        }
+                    }
+                    perval = *iter;
+                }
+                return straight;
             }
         }
     }else {
@@ -186,6 +218,24 @@ cardtype CCardOperator::getCardsType(list<CCardSprite*>& lstCards){
                     }
                 }
             }
+        }
+        
+        //10
+        int firstval = lstVals.front();
+        int perval = 0;
+        lstVals.pop_front();
+        for (list<int>::iterator iter = lstVals.begin();
+             iter != lstVals.end(); ++iter) {
+            if (perval != 0) {
+                if (perval + 1 != (*iter)) {
+                    return unknow;
+                }
+            }
+            perval = *iter;
+        }
+        
+        if (lstVals.back() == 13 && firstval == 1) {
+            return straight;
         }
     }
     return unknow;
@@ -243,18 +293,20 @@ bool CCardOperator::BiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSpr
 int CCardOperator::straightVal(list<CCardSprite*>& lstCards){
     int maxVal = 13;
     if (lstCards.size() < 14) {
-        int val = lstCards.front()->getSeq()/4;
-        if (lstCards.front()->getSeq()/4 == 0
-            && lstCards.back()->getSeq()/4 == 12) {
-            maxVal = val;
+        list<int> lstVals;
+        for (list<CCardSprite*>::iterator iter = lstCards.begin();
+             iter != lstCards.end(); ++iter) {
+            lstVals.push_back(vecCardInfo[(*iter)->getSeq()].val);
+        }
+        
+        maxVal = lstVals.back()-1;
+        if (lstVals.front() == 1 && maxVal == 12) {
+            maxVal = 13;
         }
     }
     return maxVal;
 }
 
-bool CCardOperator::straightBiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSprite*>& nowCards){
-    return true;
-}
 
 int CCardOperator::getLittestCardRval(list<CCardSprite*>& lstCards){
     int seq = lstCards.front()->getSeq();

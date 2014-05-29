@@ -58,9 +58,9 @@ void CResourceManager::init(){
 CCardSprite* CResourceManager::get_card(int seq){
     CCardSprite *card = new CCardSprite;
     if (seq == 52) {
-        card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("redking"));
-    }else if (seq == 53) {
         card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("blackking"));
+    }else if (seq == 53) {
+        card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("redking"));
     }else {
         card->initWithSpriteFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("front"));
         CCSize cardsize = card->getContentSize();

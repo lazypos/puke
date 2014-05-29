@@ -126,9 +126,23 @@ bool CCardAI::putBigger(list<CCardSprite*>& lstPer, list<CCardSprite*>& lstNow){
         return true;
     }
     
+    cardtype ct = CardOprator::instance()->getCardsType(lstPer);
     
+    bool canput = false;
+    if (lstPer.size() == 1) {
+        canput = putBiggerSignal(lstPer.front()->getSeq(), lstNow);
+    }
     
-    return false;
+    if (ct == apair) {
+        int seq = lstPer.front()->getSeq();
+        int rval = CardOprator::instance()->getRealValue(seq);
+        canput = putBiggerApair(rval, lstNow);
+    }else if (ct == straight){
+        int val = CardOprator::instance()->straightVal(lstPer);
+        canput = putBiggerstraight(val, lstPer.size(), lstNow);
+    }
+    
+    return canput;
 }
 
 
