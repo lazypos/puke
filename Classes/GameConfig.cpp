@@ -23,6 +23,8 @@ void        CGameConfig::init(){
 void        CGameConfig::game_start(){
     CardOprator::instance()->shuffle();
     
+    isDouble = false;
+    
     srand(time(NULL));
     int n = rand()%3;
     lastOutCards = n;
@@ -34,3 +36,36 @@ void        CGameConfig::game_start(){
     }
     ganmeStatus = game_started;
 }
+
+int        CGameConfig::game_check(){
+    if (vecPlayers[0].isking) {
+        if (vecPlayers[0].isOver){
+            return WIN;
+        }
+        if (vecPlayers[1].isOver && vecPlayers[2].isOver) {
+            return LOSE;
+        }
+    }else if (vecPlayers[1].isking){
+        if (vecPlayers[1].isOver){
+            return LOSE;
+        }
+        if (vecPlayers[0].isOver && vecPlayers[2].isOver) {
+            return WIN;
+        }
+    }else {
+        if (vecPlayers[2].isOver){
+            return LOSE;
+        }
+        if (vecPlayers[0].isOver && vecPlayers[1].isOver) {
+            return WIN;
+        }
+    }
+    return CONTINUE;
+}
+
+
+
+
+
+
+

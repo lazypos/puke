@@ -24,7 +24,10 @@ public:
     float                   time;
     int                     _num;
     bool                    isActive; // 是否是该玩家出牌
+    bool                    isOver; // 出完
     bool                    isMainPlayer;
+    bool                    isking;
+    bool                    isWin;
     // 前一次出的牌
     list<CCardSprite*>      lstFront;
     

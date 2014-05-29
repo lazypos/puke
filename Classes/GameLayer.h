@@ -22,12 +22,12 @@ class  CGameLayer : public CCLayer{
     CCSize  winSize;
     
     list<CCardSprite*> perCards;
+    int                lastOutPlayer;
     
     CREATE_FUNC(CGameLayer)
     bool    init();
     void    initGame();
     void    reviewPlayer(int n);
-    void    reviewOther();
     
     void    putCards(int n);
     void    passCards(int n);
@@ -43,6 +43,8 @@ class  CGameLayer : public CCLayer{
     
     void    clearSelected(int n);
     
+    CCLabelBMFont* getLabelTime(int n);
+    void    overDo(int n);
 public:
     static CCScene* scene();
 };

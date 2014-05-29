@@ -46,25 +46,91 @@ bool CCardAI::putBiggerApair(int rval, list<CCardSprite*>& lst){
     return false;
 }
 
+bool CCardAI::findStraightFrom(int minVal, int len, list<CCardSprite*>& lst){
+    // 不算A
+    list<CCardSprite*> shouldSelect;
+    int tmp = minVal;
+    int tmplen = 0;
+    for (list<CCardSprite*>::iterator iter = lst.begin();
+         iter != lst.end(); ++iter){
+        if ((*iter)->getSeq()/4 == tmp) {
+            shouldSelect.push_back(*iter);
+            tmp++;
+            tmplen++;
+            if (tmplen == len) // 找到
+                break;
+        }
+    }
+    if (tmplen == len) {
+        for (list<CCardSprite*>::iterator iter = shouldSelect.begin();
+             iter != shouldSelect.end(); ++iter) {
+            (*iter)->setSelected(true);
+        }
+        return true;
+    }
+    return false;
+}
+
 bool CCardAI::putBiggerstraight(int val, int len, list<CCardSprite*>& lst){
     if (len < 14 && val < 13) {
-        int minval = val - len + 1;
+        int minval = val - len + 2;
         list<CCardSprite*> lsttmp;
         for (list<CCardSprite*>::iterator iter = lst.begin();
              iter != lst.end(); ++iter) {
-            for (list<CCardSprite*>::iterator iter = lst.begin();
-                 iter != lst.end(); ++iter) {
-                if (CardOprator::instance()->getRealValue((*iter)->getSeq()) > minval) {
-                    lsttmp.push_back(*iter);
-                }
+            int seq = (*iter)->getSeq();
+            if (CardOprator::instance()->getRealValue(seq) > minval) {
+                if (seq/4==1 && minval != 0)
+                    continue;
+                if (IS_KING(seq))
+                    continue;
+                
+                lsttmp.push_back(*iter);
             }
         }
         if (lsttmp.size() >= len) {
-            
+            // 不算a
+            for (int i=minval; i<minval+12-val; i++) {
+                if (findStraightFrom(i, len, lsttmp))
+                    return true;
+            }
+            // suan a
+            if (lsttmp.front()->getSeq()/4 == 0) {
+                list<CCardSprite*> shouldSelect;
+                int tmp = 14-len;
+                for (list<CCardSprite*>::iterator iter = lsttmp.begin();
+                     iter != lsttmp.end(); ++iter){
+                    if ((*iter)->getSeq()/4 == tmp) {
+                        shouldSelect.push_back(*iter);
+                        tmp++;
+                        if (tmp == 13)
+                            break;
+                    }
+                }
+                if (tmp == 13) {
+                    lsttmp.front()->setSelected(true);
+                    for (list<CCardSprite*>::iterator iter = shouldSelect.begin();
+                         iter != shouldSelect.end(); ++iter) {
+                        (*iter)->setSelected(true);
+                    }
+                    return true;
+                }
+            }
         }
     }
     return false;
 }
+
+bool CCardAI::putBigger(list<CCardSprite*>& lstPer, list<CCardSprite*>& lstNow){
+    if (lstPer.empty()) {
+        putOneCard(lstNow);
+        return true;
+    }
+    
+    
+    
+    return false;
+}
+
 
 
 

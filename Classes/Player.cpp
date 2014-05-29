@@ -12,8 +12,6 @@
 #include "GameConfig.h"
 
 void  CPlayer::init(){
-    time = 30;
-    isActive = false;
     sorcer = 10000;
 }
 
@@ -22,9 +20,15 @@ bool    CPlayer::start(int num){
     _num = num;
     
     bool bactive = false;
+    isOver = false;
+    time = 30;
+    isWin = false;
     vector<int> cards;
     if(CardOprator::instance()->getCard(num, cards))
+    {
+        isking = true;
         bactive = true;
+    }
     for (vector<int>::iterator iter = cards.begin(); iter != cards.end(); ++iter) {
         CCardSprite *card = ResourceManager::instance()->get_card(*iter);
         lstCards.push_back(card);

@@ -19,19 +19,24 @@ typedef enum _gameStatus{
     game_over, // 游戏结束
 }gameStatus;
 
+#define WIN      1
+#define LOSE     2
+#define CONTINUE     3
+
 class CGameConfig {
 public:
     vector<CPlayer> vecPlayers;
-    
-    void        init();
     
     int         gameMode;
     gameStatus  ganmeStatus;
     
     int         activePlayer;
     int         lastOutCards;
+    bool        isDouble;
     
+    void        init();
     void        game_start();
+    int         game_check();
 };
 
 typedef mysigleton<CGameConfig> GameConfig;
