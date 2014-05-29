@@ -122,7 +122,16 @@ bool CCardAI::putBiggerstraight(int val, int len, list<CCardSprite*>& lst){
 
 bool CCardAI::putBigger(list<CCardSprite*>& lstPer, list<CCardSprite*>& lstNow){
     if (lstPer.empty()) {
-        putOneCard(lstNow);
+        for (int i = 8; i<3; i--) {
+            if (putBiggerstraight(2, i, lstNow)) {
+                return true;
+            }
+        }
+        if (!putBiggerstraight(2, 3, lstNow)
+            && !putBiggerApair(2, lstNow)) {
+            putOneCard(lstNow);
+        }
+        
         return true;
     }
     

@@ -26,7 +26,7 @@ void CCardOperator::init(){
             card.rval = 16;
         }else {
 			card.val = i/4+1;
-            card.rval = card.val;
+            card.rval = card.val-1;
 		}
         
         if (i/4 == 0) {
@@ -272,16 +272,21 @@ bool CCardOperator::BiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSpr
     int nowval = getLittestCardRval(nowCards);
     
     if (perType == boom) {
+        if (nowType == kingboom || nowType == tenboom)
+            return true;
         if (nowval <= perval || perCards.size() > nowCards.size()) {
             return false;
         }
     }else if (perType == straight) {
-        if (straightVal(nowCards) <= straightVal(perCards)
-            || nowCards.size() != perCards.size()) {
-            return false;
+        if (nowType != boom || nowType == kingboom || nowType == tenboom){
+            if (straightVal(nowCards) <= straightVal(perCards)
+                || nowCards.size() != perCards.size()) {
+                return false;
+            }
         }
+        
     } else {
-        if (nowType != boom) {
+        if (nowType != boom || nowType == kingboom || nowType == tenboom) {
             if (nowval <= perval || nowCards.size() != perCards.size())
                 return false;
         }

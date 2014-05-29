@@ -32,7 +32,7 @@ typedef enum _cardtype{
 typedef struct cardinfo{
     int seq;    // 0-53
     int val;    // 1-14 14 king
-    int rval;   // 比大小用 3-12 A:13 2:14 小王:15 大王:16 红十:17
+    int rval;   // 比大小用 2-12 A:13 2:14 小王:15 大王:16 红十:17
     int color;  // 0-4
 }CardInfo;
 

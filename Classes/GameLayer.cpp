@@ -131,6 +131,17 @@ bool    CGameLayer::init(){
     lebLose->setVisible(false);
     this->addChild(lebLose, 100, tagLose);
     
+    // 地主头像
+    CCSprite *dz = CCSprite::create("game_list_role.png");
+    dz->setVisible(false);
+    this->addChild(dz, 1, tagDZ);
+    // 关闭窗口
+    CCMenuItemImage *closeitem = CCMenuItemImage::create("CloseSelected.png", "CloseSelected.png", this, menu_selector(CGameLayer::onClose));
+    CCMenu *closeMenu = CCMenu::create();
+    closeMenu->addChild(closeitem);
+    closeMenu->setPosition(ccp(winSize.width-50, winSize.height-50));
+    this->addChild(closeMenu, 20);
+    
     //this->scheduleUpdate();
     //this->schedule(schedule_selector(CGameLayer::update), 0.1f);
     this->schedule(schedule_selector(CGameLayer::playerSchedule), 0.1f);
@@ -153,6 +164,16 @@ void    CGameLayer::initGame(){
     lbLose->setVisible(false);
     
     GameConfig::instance()->game_start();
+    CCSprite *dz = (CCSprite*)(this->getChildByTag(tagDZ));
+    if (GameConfig::instance()->activePlayer == 0){
+        dz->setPosition(ccp(winSize.width-200, 250));
+    }else if (GameConfig::instance()->activePlayer == 1){
+        dz->setPosition(ccp(winSize.width-80, winSize.height/2+250));
+    }else{
+        dz->setPosition(ccp(80, winSize.height/2+250));
+    }
+    
+    dz->setVisible(true);
     for (int i=0; i<3; i++)
         reviewPlayer(i);
 }
@@ -186,9 +207,9 @@ void    CGameLayer::reviewPlayer(int n){
         if (n == 0)
             p->setPosition(ccp(posbegin+i*45, 350));
         else if (n == 1)
-            p->setPosition(ccp(winSize.width/2+200, winSize.height-200-i*20));
+            p->setPosition(ccp(winSize.width/2+200, winSize.height-200-i*50));
         else
-            p->setPosition(ccp(winSize.width/2-200, winSize.height-200-i*20));
+            p->setPosition(ccp(winSize.width/2-200, winSize.height-200-i*50));
         i++;
         this->addChild(p, 2, p->getSeq());
     }
@@ -467,4 +488,8 @@ void    CGameLayer::clear(){
     }
 }
 
+void   CGameLayer::onClose(){
+    CCMessageBox("Exit game?", "Alert");
+    exit(0);
+}
 
