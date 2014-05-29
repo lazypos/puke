@@ -29,6 +29,9 @@ class  CGameLayer : public CCLayer{
     void    reviewPlayer(int n);
     void    reviewOther();
     
+    void    putCards(int n);
+    void    passCards(int n);
+    
     bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
     void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
     

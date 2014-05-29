@@ -58,6 +58,10 @@ public:
     bool        BiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSprite*>& nowCards);
     // 获取rval最小的牌
     int         getLittestCardRval(list<CCardSprite*>& lstCards);
+    // 顺子最小值
+    int         straightVal(list<CCardSprite*>& lstCards);
+    // 顺子比较大小
+    bool        straightBiggerThanBefore(list<CCardSprite*>& perCards, list<CCardSprite*>& nowCards);
 };
 
 typedef  mysigleton<CCardOperator>    CardOprator;

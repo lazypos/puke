@@ -14,7 +14,7 @@ void CCardAI::putOneCard(list<CCardSprite*>& lst){
     }
 }
 
-bool putBiggerSignal(int seq, list<CCardSprite*>& lst){
+bool CCardAI::putBiggerSignal(int seq, list<CCardSprite*>& lst){
     int rval = CardOprator::instance()->getRealValue(seq);
     for (list<CCardSprite*>::iterator iter = lst.begin();
          iter != lst.end(); ++iter) {
@@ -26,7 +26,7 @@ bool putBiggerSignal(int seq, list<CCardSprite*>& lst){
     return false;
 }
 
-bool putBiggerApair(int rval, list<CCardSprite*>& lst){
+bool CCardAI::putBiggerApair(int rval, list<CCardSprite*>& lst){
     int perValue = -1;
     CCardSprite *p;
     for (list<CCardSprite*>::iterator iter = lst.begin();
@@ -45,6 +45,28 @@ bool putBiggerApair(int rval, list<CCardSprite*>& lst){
     }
     return false;
 }
+
+bool CCardAI::putBiggerstraight(int val, int len, list<CCardSprite*>& lst){
+    if (len < 14 && val < 13) {
+        int minval = val - len + 1;
+        list<CCardSprite*> lsttmp;
+        for (list<CCardSprite*>::iterator iter = lst.begin();
+             iter != lst.end(); ++iter) {
+            for (list<CCardSprite*>::iterator iter = lst.begin();
+                 iter != lst.end(); ++iter) {
+                if (CardOprator::instance()->getRealValue((*iter)->getSeq()) > minval) {
+                    lsttmp.push_back(*iter);
+                }
+            }
+        }
+        if (lsttmp.size() >= len) {
+            
+        }
+    }
+    return false;
+}
+
+
 
 
 

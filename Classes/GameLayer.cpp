@@ -209,43 +209,79 @@ void CGameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent){
     }
 }
 
-void CGameLayer::onGreenClicked(CCObject* pSender){
-    if (GameConfig::instance()->activePlayer%3 != 0)
-        return;
-    
+void   CGameLayer::putCards(int n){
     list<CCardSprite*> lstSelected;
     GameConfig::instance()->vecPlayers[0].getSelectedCards(lstSelected);
     if (lstSelected.empty())
-        return
+        return;
     
-    lstSelected.sort(mysort);
-    
+    //lstSelected.sort(mysort);
     if (!CardOprator::instance()->BiggerThanBefore(perCards, lstSelected))
         return;
     
     perCards = lstSelected;
     // 先清理之前门前的牌
-    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[0].lstFront.begin();
-         iter != GameConfig::instance()->vecPlayers[0].lstFront.end(); ++iter) {
+    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[n].lstFront.begin();
+         iter != GameConfig::instance()->vecPlayers[n].lstFront.end(); ++iter) {
         if ((*iter)) {
             this->removeChildByTag((*iter)->getSeq());
         }
     }
-    // 再清理手牌
-    GameConfig::instance()->vecPlayers[0].lstFront = lstSelected;
-    list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
-    for (list<CCardSprite*>::iterator iter = lstCards.begin();
-         iter != lstCards.end(); ++iter) {
+    GameConfig::instance()->vecPlayers[n].lstFront = lstSelected;
+    if (n == 0) {
+        // 清理手牌
+        list<CCardSprite*> lstCards = GameConfig::instance()->vecPlayers[0].getCardsList();
+        for (list<CCardSprite*>::iterator iter = lstCards.begin();
+             iter != lstCards.end(); ++iter) {
+            if ((*iter)) {
+                this->removeChildByTag((*iter)->getSeq());
+            }
+        }
+    }
+    
+    GameConfig::instance()->vecPlayers[n].deleteSelectedCards();
+    reviewPlayer(n);
+    CCLabelBMFont* lbTime;
+    if (n == 0) {
+        lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
+    }else if (n == 1){
+        lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime1));
+    }else {
+        lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime2));
+    }
+    GameConfig::instance()->vecPlayers[n].isActive = false;
+    GameConfig::instance()->activePlayer++;
+    lbTime->setVisible(false);
+}
+
+void CGameLayer::onGreenClicked(CCObject* pSender){
+    if (GameConfig::instance()->activePlayer%3 != 0)
+        return;
+    
+    putCards(0);
+}
+
+void CGameLayer::passCards(int n){
+    if (perCards.empty())
+        return;
+    
+    // 清理门前的牌
+    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[n].lstFront.  begin();
+         iter != GameConfig::instance()->vecPlayers[n].lstFront.end(); ++iter) {
         if ((*iter)) {
             this->removeChildByTag((*iter)->getSeq());
         }
     }
-    
-    GameConfig::instance()->vecPlayers[0].deleteSelectedCards();
-    reviewPlayer(0);
-    
-    CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
-    GameConfig::instance()->vecPlayers[0].isActive = false;
+
+    CCLabelBMFont* lbTime;
+    if (n == 0) {
+        lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
+    }else if (n == 1){
+        lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime1));
+    }else {
+        lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime2));
+    }
+    GameConfig::instance()->vecPlayers[n].isActive = false;
     GameConfig::instance()->activePlayer++;
     lbTime->setVisible(false);
 }
@@ -254,21 +290,7 @@ void CGameLayer::onRedClicked(CCObject* pSender){
     if (GameConfig::instance()->activePlayer%3 != 0)
         return;
     
-    if (perCards.empty())
-        return;
-    
-    // 清理门前的牌
-    for (list<CCardSprite*>::iterator iter = GameConfig::instance()->vecPlayers[0].lstFront.begin();
-         iter != GameConfig::instance()->vecPlayers[0].lstFront.end(); ++iter) {
-        if ((*iter)) {
-            this->removeChildByTag((*iter)->getSeq());
-        }
-    }
-    
-    CCLabelBMFont* lbTime = (CCLabelBMFont*)(this->getChildByTag(tagTime0));
-    GameConfig::instance()->vecPlayers[0].isActive = false;
-    GameConfig::instance()->activePlayer++;
-    lbTime->setVisible(false);
+    passCards(0);
 }
 
 void    CGameLayer::reviewOther(){
