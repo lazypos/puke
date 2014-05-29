@@ -48,7 +48,7 @@ bool    CGameLayer::init(){
     sorcerLabel->setPosition(ccp(winSize.width/2, 25));
     this->addChild(sorcerLabel, 1, tagSorcer0);
     
-    CCLabelTTF *lebname = CCLabelTTF::create("大狗哥", "font/Marker Felt.ttf", 35);
+    CCLabelTTF *lebname = CCLabelTTF::create("狗桃", "font/Marker Felt.ttf", 35);
     lebname->setPosition(ccp(winSize.width/2+200, 25));
     this->addChild(lebname, 1, tagName0);
     
@@ -56,7 +56,7 @@ bool    CGameLayer::init(){
     CCSprite *sorcerPic1 = CCSprite::create("game_icon_treasure.png");
     sorcerPic1->setPosition(ccp(winSize.width-200, winSize.height/2+200));
     this->addChild(sorcerPic1);
-    sorcer = GameConfig::instance()->vecPlayers[2].getSorcer();
+    sorcer = GameConfig::instance()->vecPlayers[1].getSorcer();
     memset(buf, 0, 20);
     sprintf(buf, "%d", sorcer);
     CCLabelBMFont* sorcerLabel1 = CCLabelBMFont::create(buf, "fontGreen.fnt");
@@ -103,7 +103,8 @@ bool    CGameLayer::init(){
     pMenu->setPosition(ccp(winSize.width/2, 250));
     pMenu->addChild(redbuttonItem);
     pMenu->addChild(greenbuttonItem);
-    this->addChild(pMenu);
+	pMenu->setVisible(false);
+    this->addChild(pMenu, 1, tagChupai);
     
     // 倒计时菜单
     CCLabelBMFont* mainTime = CCLabelBMFont::create("30", "fontWhiteBrownLevel.fnt");
@@ -122,22 +123,28 @@ bool    CGameLayer::init(){
     GameConfig::instance()->ganmeStatus = game_over;
     
     // 胜负信息
-    CCLabelTTF *lebWin = CCLabelTTF::create("你赢了！", "font/Marker Felt.ttf", 100);
+    CCLabelTTF *lebWin = CCLabelTTF::create("You Win!", "font/Marker Felt.ttf", 100);
     lebWin->setPosition(ccp(winSize.width/2, winSize.height/2+300));
     lebWin->setVisible(false);
     this->addChild(lebWin, 100, tagWin);
-    CCLabelTTF *lebLose = CCLabelTTF::create("你输了！", "font/Marker Felt.ttf", 100);
+    CCLabelTTF *lebLose = CCLabelTTF::create("You Lose!", "font/Marker Felt.ttf", 100);
     lebLose->setPosition(ccp(winSize.width/2, winSize.height/2+300));
     lebLose->setVisible(false);
     this->addChild(lebLose, 100, tagLose);
+	CCLabelTTF *lebHe = CCLabelTTF::create(" 和局 ", "font/Marker Felt.ttf", 100);
+	lebHe->setPosition(ccp(winSize.width/2, winSize.height/2+300));
+	lebHe->setVisible(false);
+	this->addChild(lebHe, 100, tagHe);
     
     // 地主头像
     CCSprite *dz = CCSprite::create("game_list_role.png");
     dz->setVisible(false);
     this->addChild(dz, 1, tagDZ);
     // 关闭窗口
-    CCMenuItemImage *closeitem = CCMenuItemImage::create("CloseSelected.png", "CloseSelected.png", this, menu_selector(CGameLayer::onClose));
-    CCMenu *closeMenu = CCMenu::create();
+    CCMenuItemImage *closeitem = CCMenuItemImage::create();
+    closeitem->initWithNormalImage("CloseSelected.png","CloseSelected.png","CloseSelected.png",
+		this, menu_selector(CGameLayer::onCloseGame));
+	CCMenu *closeMenu = CCMenu::create();
     closeMenu->addChild(closeitem);
     closeMenu->setPosition(ccp(winSize.width-50, winSize.height-50));
     this->addChild(closeMenu, 20);
@@ -230,7 +237,6 @@ void    CGameLayer::reviewPlayer(int n){
 
 bool CGameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent){
     if (GameConfig::instance()->ganmeStatus == game_over) {
-        //GameConfig::instance()->ganmeStatus = game_ready;
         initGame();
         GameConfig::instance()->ganmeStatus = game_started;
         int playerSeq = GameConfig::instance()->activePlayer%3;
@@ -336,7 +342,28 @@ void   CGameLayer::putCards(int n){
             GameConfig::instance()->ganmeStatus = game_over;
             CCLabelTTF* lbLose = (CCLabelTTF*)(this->getChildByTag(tagLose));
             lbLose->setVisible(true);
+        }else if (rst == HE) {
+			GameConfig::instance()->ganmeStatus = game_over;
+			CCLabelTTF* lbHe = (CCLabelTTF*)(this->getChildByTag(tagHe));
+			lbHe->setVisible(true);
         }
+ 
+		if (rst != CONTINUE) {
+			char buf[20];
+			for (int i=0; i<3; i++) {
+				int sorcer = GameConfig::instance()->vecPlayers[i].getSorcer();
+				memset(buf, 0, 20);
+				sprintf(buf, "%05d", sorcer);
+				CCLabelBMFont* sorcerLabel;
+				if (i == 0)
+					sorcerLabel = (CCLabelBMFont*)(this->getChildByTag(tagSorcer0));
+				else if (i == 1)
+					sorcerLabel = (CCLabelBMFont*)(this->getChildByTag(tagSorcer1));
+				else
+					sorcerLabel = (CCLabelBMFont*)(this->getChildByTag(tagSorcer2));
+				sorcerLabel->setString(buf);
+			}
+		}
     }
     overDo(n);
 }
@@ -382,6 +409,8 @@ void  CGameLayer::overDo(int n){
     if (lastOutPlayer == playerSeq) {
         perCards.clear();
     }
+	CCMenu *pMenu = (CCMenu*)(this->getChildByTag(tagChupai));
+	pMenu->setVisible(false);
 }
 
 void CGameLayer::onRedClicked(CCObject* pSender){
@@ -400,9 +429,14 @@ void  CGameLayer::playerSchedule(float dt){
         return;
     }
     int playerSeq = GameConfig::instance()->activePlayer%3;
+
     if (GameConfig::instance()->vecPlayers[playerSeq].isActive) {
         if (!GameConfig::instance()->vecPlayers[playerSeq].isOver) {
-            GameConfig::instance()->vecPlayers[playerSeq].time -= dt;
+            if (playerSeq == 0) {
+				CCMenu *pMenu = (CCMenu*)(this->getChildByTag(tagChupai));
+				pMenu->setVisible(true);
+			}
+			GameConfig::instance()->vecPlayers[playerSeq].time -= dt;
             CCLabelBMFont* lbTime = getLabelTime(playerSeq);
             lbTime->setVisible(true);
             char buf[20];
@@ -475,7 +509,7 @@ void    CGameLayer::clear(){
     }
 }
 
-void   CGameLayer::onClose(){
+void   CGameLayer::onCloseGame(CCObject*P){
     CCMessageBox("Exit game?", "Alert");
     exit(0);
 }

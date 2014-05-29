@@ -14,6 +14,7 @@ void        CGameConfig::init(){
     for (int i=0; i<3; i++) {
         CPlayer player;
         player.init();
+		player.sorcer = getSorcer(i);
         if (i == 0)
             player.isMainPlayer = true;
         vecPlayers.push_back(player);
@@ -24,7 +25,8 @@ void        CGameConfig::game_start(){
     CardOprator::instance()->shuffle();
     
     isDouble = false;
-    
+    baseSorcer =  20;
+
     srand(time(NULL));
     int n = rand()%3;
     lastOutCards = n;
@@ -37,36 +39,91 @@ void        CGameConfig::game_start(){
 }
 
 int        CGameConfig::game_check(){
+	int rst = CONTINUE;
     if (vecPlayers[0].isking) {
         if (vecPlayers[0].isOver){
-            return WIN;
+            if (vecPlayers[1].isOver || vecPlayers[2].isOver)
+				rst = HE;
+			else{
+				vecPlayers[0].sorcer += 2*baseSorcer;
+				vecPlayers[1].sorcer -= baseSorcer;
+				vecPlayers[2].sorcer -= baseSorcer;
+				rst = WIN;
+			}
         }
         if (vecPlayers[1].isOver && vecPlayers[2].isOver) {
-            return LOSE;
+			vecPlayers[0].sorcer -= 2*baseSorcer;
+			vecPlayers[1].sorcer += baseSorcer;
+			vecPlayers[2].sorcer += baseSorcer;
+            rst = LOSE;
         }
     }
     
     if (vecPlayers[1].isking){
         if (vecPlayers[1].isOver){
-            return LOSE;
+			if (vecPlayers[0].isOver || vecPlayers[2].isOver)
+				rst = HE;
+			else{
+				vecPlayers[0].sorcer -= baseSorcer;
+				vecPlayers[1].sorcer += 2*baseSorcer;
+				vecPlayers[2].sorcer -= baseSorcer;
+				rst = LOSE;
+			}
         }
         if (vecPlayers[0].isOver && vecPlayers[2].isOver) {
-            return WIN;
+			vecPlayers[0].sorcer += baseSorcer;
+			vecPlayers[1].sorcer -= 2*baseSorcer;
+			vecPlayers[2].sorcer += baseSorcer;
+            rst = WIN;
         }
     }
     
     if (vecPlayers[2].isking){
         if (vecPlayers[2].isOver){
-            return LOSE;
+			if (vecPlayers[0].isOver || vecPlayers[1].isOver)
+				rst = HE;
+			else{
+				vecPlayers[0].sorcer -= baseSorcer;
+				vecPlayers[1].sorcer -= baseSorcer;
+				vecPlayers[2].sorcer += 2*baseSorcer;
+				rst = LOSE;
+			}
         }
         if (vecPlayers[0].isOver && vecPlayers[1].isOver) {
-            return WIN;
+			vecPlayers[0].sorcer += baseSorcer;
+			vecPlayers[1].sorcer += baseSorcer;
+			vecPlayers[2].sorcer -= 2*baseSorcer;
+            rst = WIN;
         }
     }
-    return CONTINUE;
+	for (int k=0; k<3; k++) {
+		saveSorcer(k, vecPlayers[k].sorcer);
+	}
+    return rst;
 }
 
+void CGameConfig::saveSorcer(int n, int val)
+{
+	char buf[20] = {0};
+	sprintf(buf, "re%01d.vd", n);
+	FILE *fd = fopen(buf, "wb");
+	if (fd){
+		fwrite((char*)&val, 4, 1, fd);
+		fclose(fd);
+	}
+}
 
+int	CGameConfig::getSorcer(int n){
+	int val = 10000;
+	char buf[20] = {0};
+	sprintf(buf, "re%01d.vd", n);
+	FILE *fd = fopen(buf, "rb");
+	if (fd){
+		fread((char*)&val, 4, 1, fd);
+		fclose(fd);
+	}
+	return val;
+}
 
 
 

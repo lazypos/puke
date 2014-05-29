@@ -24,6 +24,7 @@ bool    CPlayer::start(int num){
     isOver = false;
     time = 30;
     isWin = false;
+	isking = false;
     vector<int> cards;
     if(CardOprator::instance()->getCard(num, cards))
     {

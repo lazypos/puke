@@ -29,8 +29,10 @@ typedef enum _tag{
     
     tagWin,
     tagLose,
+	tagHe,
     
     tagDZ,
+	tagChupai,
 }gameTag;
 
 #endif

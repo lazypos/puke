@@ -21,7 +21,8 @@ typedef enum _gameStatus{
 
 #define WIN      1
 #define LOSE     2
-#define CONTINUE     3
+#define HE		3
+#define CONTINUE     4
 
 class CGameConfig {
 public:
@@ -33,10 +34,14 @@ public:
     int         activePlayer;
     int         lastOutCards;
     bool        isDouble;
+	int			baseSorcer;
     
     void        init();
     void        game_start();
     int         game_check();
+
+	void		saveSorcer(int n, int val);
+	int			getSorcer(int n);
 };
 
 typedef mysigleton<CGameConfig> GameConfig;

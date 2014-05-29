@@ -18,8 +18,6 @@ class CPlayer{
     
     list<CCardSprite*>      lstCards;
     
-    int                     sorcer;
-    
 public:
     float                   time;
     int                     _num;
@@ -28,6 +26,7 @@ public:
     bool                    isMainPlayer;
     bool                    isking;
     bool                    isWin;
+	 int                    sorcer;
     // 前一次出的牌
     list<CCardSprite*>      lstFront;
     
