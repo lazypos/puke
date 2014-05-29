@@ -30,11 +30,10 @@ void        CGameConfig::game_start(){
     lastOutCards = n;
     printf("restart game:%d\n", n);
     for (int i=0; i<3; i++) {
-        if (vecPlayers[n++].start(i))
-            activePlayer = n-1;
-        n %= 3;
+        if (vecPlayers[n].start(i))
+            activePlayer = n;
+        n = (n+1)%3;
     }
-    ganmeStatus = game_started;
 }
 
 int        CGameConfig::game_check(){
@@ -45,14 +44,18 @@ int        CGameConfig::game_check(){
         if (vecPlayers[1].isOver && vecPlayers[2].isOver) {
             return LOSE;
         }
-    }else if (vecPlayers[1].isking){
+    }
+    
+    if (vecPlayers[1].isking){
         if (vecPlayers[1].isOver){
             return LOSE;
         }
         if (vecPlayers[0].isOver && vecPlayers[2].isOver) {
             return WIN;
         }
-    }else {
+    }
+    
+    if (vecPlayers[2].isking){
         if (vecPlayers[2].isOver){
             return LOSE;
         }

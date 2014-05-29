@@ -45,6 +45,8 @@ class  CGameLayer : public CCLayer{
     
     CCLabelBMFont* getLabelTime(int n);
     void    overDo(int n);
+    void    clear();
+    
 public:
     static CCScene* scene();
 };

@@ -119,10 +119,20 @@ bool    CGameLayer::init(){
     mainTime2->setVisible(false);
     this->addChild(mainTime2, 1, tagTime2);
     
-    GameConfig::instance()->ganmeStatus = game_ready;
+    GameConfig::instance()->ganmeStatus = game_over;
+    
+    // 胜负信息
+    CCLabelTTF *lebWin = CCLabelTTF::create("你赢了！", "font/Marker Felt.ttf", 100);
+    lebWin->setPosition(ccp(winSize.width/2, winSize.height/2+200));
+    lebWin->setVisible(false);
+    this->addChild(lebWin, 100, tagWin);
+    CCLabelTTF *lebLose = CCLabelTTF::create("你输了！", "font/Marker Felt.ttf", 100);
+    lebLose->setPosition(ccp(winSize.width/2, winSize.height/2+200));
+    lebLose->setVisible(false);
+    this->addChild(lebLose, 100, tagLose);
     
     //this->scheduleUpdate();
-    this->schedule(schedule_selector(CGameLayer::update), 0.1f);
+    //this->schedule(schedule_selector(CGameLayer::update), 0.1f);
     this->schedule(schedule_selector(CGameLayer::playerSchedule), 0.1f);
     
     setTouchEnabled(true);
@@ -131,6 +141,17 @@ bool    CGameLayer::init(){
 }
 
 void    CGameLayer::initGame(){
+    clear();
+    perCards.clear();
+    for (int i=0; i<3; i++) {
+        CCLabelBMFont* lb = getLabelTime(i);
+        lb->setVisible(false);
+    }
+    CCLabelTTF* lbwin = (CCLabelTTF*)(this->getChildByTag(tagWin));
+    lbwin->setVisible(false);
+    CCLabelTTF* lbLose = (CCLabelTTF*)(this->getChildByTag(tagLose));
+    lbLose->setVisible(false);
+    
     GameConfig::instance()->game_start();
     for (int i=0; i<3; i++)
         reviewPlayer(i);
@@ -188,7 +209,11 @@ void    CGameLayer::reviewPlayer(int n){
 
 bool CGameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent){
     if (GameConfig::instance()->ganmeStatus == game_over) {
-        GameConfig::instance()->ganmeStatus = game_ready;
+        //GameConfig::instance()->ganmeStatus = game_ready;
+        initGame();
+        GameConfig::instance()->ganmeStatus = game_started;
+        int playerSeq = GameConfig::instance()->activePlayer%3;
+        GameConfig::instance()->vecPlayers[playerSeq].isActive = true;
         return true;
     }
     
@@ -281,16 +306,25 @@ void   CGameLayer::putCards(int n){
     }
     if (GameConfig::instance()->vecPlayers[n].getCardsList().size() <= 0) {
         GameConfig::instance()->vecPlayers[n].isOver = true;
-        if (GameConfig::instance()->game_check() == WIN) {
+        int rst = GameConfig::instance()->game_check();
+        if (rst == WIN) {
             GameConfig::instance()->ganmeStatus = game_over;
-        }else if (GameConfig::instance()->game_check() == LOSE){
+            CCLabelTTF* lbwin = (CCLabelTTF*)(this->getChildByTag(tagWin));
+            lbwin->setVisible(true);
+        }else if (rst == LOSE){
             GameConfig::instance()->ganmeStatus = game_over;
+            CCLabelTTF* lbLose = (CCLabelTTF*)(this->getChildByTag(tagLose));
+            lbLose->setVisible(true);
         }
     }
     overDo(n);
 }
 
 void CGameLayer::onGreenClicked(CCObject* pSender){
+    if (GameConfig::instance()->ganmeStatus != game_started) {
+        return;
+    }
+    
     if (GameConfig::instance()->activePlayer%3 != 0)
         return;
     
@@ -329,6 +363,9 @@ void  CGameLayer::overDo(int n){
 }
 
 void CGameLayer::onRedClicked(CCObject* pSender){
+    if (GameConfig::instance()->ganmeStatus != game_started) {
+        return;
+    }
     if (GameConfig::instance()->activePlayer%3 != 0)
         return;
     
@@ -349,6 +386,9 @@ void CGameLayer::update(float dt){
 }
 
 void  CGameLayer::playerSchedule(float dt){
+    if (GameConfig::instance()->ganmeStatus != game_started) {
+        return;
+    }
     int playerSeq = GameConfig::instance()->activePlayer%3;
     if (GameConfig::instance()->vecPlayers[playerSeq].isActive) {
         if (!GameConfig::instance()->vecPlayers[playerSeq].isOver) {
@@ -372,7 +412,7 @@ void  CGameLayer::playerSchedule(float dt){
                 }
             }else{
                 if (playerSeq != 0) {
-                    if (GameConfig::instance()->vecPlayers[playerSeq].time > 29)
+                    if (GameConfig::instance()->vecPlayers[playerSeq].time > 30)
                         return;
                     clearSelected(playerSeq);
                     if (CCardAI::putBigger(perCards, lstCards))
@@ -415,4 +455,14 @@ void CGameLayer::clearSelected(int n){
         }
     }
 }
+
+void    CGameLayer::clear(){
+    for (int i=0; i<54; i++) {
+        CCNode* node =  this->getChildByTag(i);
+        if (node) {
+            this->removeChildByTag(i);
+        }
+    }
+}
+
 

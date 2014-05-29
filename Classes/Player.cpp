@@ -17,6 +17,7 @@ void  CPlayer::init(){
 
 bool    CPlayer::start(int num){
     clear();
+    lstFront.clear();
     _num = num;
     
     bool bactive = false;

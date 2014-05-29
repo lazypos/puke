@@ -25,6 +25,10 @@ typedef enum _tag{
     tagCards0,
     tagCards1,
     tagCards2,
+    
+    
+    tagWin,
+    tagLose,
 }gameTag;
 
 #endif
