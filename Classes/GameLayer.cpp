@@ -48,8 +48,8 @@ bool    CGameLayer::init(){
     sorcerLabel->setPosition(ccp(winSize.width/2, 25));
     this->addChild(sorcerLabel, 1, tagSorcer0);
     
-    CCLabelTTF *lebname = CCLabelTTF::create("狗桃", "font/Marker Felt.ttf", 35);
-    lebname->setPosition(ccp(winSize.width/2+200, 25));
+    CCLabelTTF *lebname = CCLabelTTF::create("大狗哥", "font/Marker Felt.ttf", 35);
+    lebname->setPosition(ccp(winSize.width/2+200, 30));
     this->addChild(lebname, 1, tagName0);
     
     // 其余玩家1信息
@@ -63,7 +63,7 @@ bool    CGameLayer::init(){
     sorcerLabel1->setPosition(ccp(winSize.width-100, winSize.height/2+200));
     this->addChild(sorcerLabel1, 1, tagSorcer1);
     
-    CCLabelTTF *lebname1 = CCLabelTTF::create("玩家1", "font/Marker Felt.ttf", 35);
+    CCLabelTTF *lebname1 = CCLabelTTF::create("鸭灭蝶", "font/Marker Felt.ttf", 35);
     lebname1->setPosition(ccp(winSize.width-100, winSize.height/2+150));
     this->addChild(lebname1, 1, tagName1);
     CCLabelBMFont* cardsNum1 = CCLabelBMFont::create("0", "fontVipLevel.fnt");
@@ -81,7 +81,7 @@ bool    CGameLayer::init(){
     sorcerLabel2->setPosition(ccp(150, winSize.height/2+200));
     this->addChild(sorcerLabel2, 1, tagSorcer2);
     
-    CCLabelTTF *lebname2 = CCLabelTTF::create("玩家2", "font/Marker Felt.ttf", 35);
+    CCLabelTTF *lebname2 = CCLabelTTF::create("狮觅妲", "font/Marker Felt.ttf", 35);
     lebname2->setPosition(ccp(100, winSize.height/2+150));
     this->addChild(lebname2, 1, tagName2);
     CCLabelBMFont* cardsNum2 = CCLabelBMFont::create("0", "fontVipLevel.fnt");
@@ -169,6 +169,8 @@ void    CGameLayer::initGame(){
     lbwin->setVisible(false);
     CCLabelTTF* lbLose = (CCLabelTTF*)(this->getChildByTag(tagLose));
     lbLose->setVisible(false);
+    CCLabelTTF* lbHe = (CCLabelTTF*)(this->getChildByTag(tagHe));
+    lbHe->setVisible(false);
     
     GameConfig::instance()->game_start();
     CCSprite *dz = (CCSprite*)(this->getChildByTag(tagDZ));

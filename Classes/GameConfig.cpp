@@ -109,22 +109,13 @@ void CGameConfig::saveSorcer(int n, int val)
 {
 	char buf[20] = {0};
 	sprintf(buf, "re%01d.vd", n);
-	FILE *fd = fopen(buf, "wb");
-	if (fd){
-		fwrite((char*)&val, 4, 1, fd);
-		fclose(fd);
-	}
+	CCUserDefault::sharedUserDefault()->setIntegerForKey(buf, val);
 }
 
 int	CGameConfig::getSorcer(int n){
-	int val = 10000;
 	char buf[20] = {0};
 	sprintf(buf, "re%01d.vd", n);
-	FILE *fd = fopen(buf, "rb");
-	if (fd){
-		fread((char*)&val, 4, 1, fd);
-		fclose(fd);
-	}
+	int val = CCUserDefault::sharedUserDefault()->getIntegerForKey(buf, 10000);
 	return val;
 }
 
